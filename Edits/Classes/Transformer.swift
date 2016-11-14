@@ -23,14 +23,13 @@ public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance ==
         self.source = source
         self.destination = destination
     }
+
+    fileprivate lazy var editDistances: [[Int]] = Transformer.editDistanceMatrix(from: self.source, to: self.destination)
+    public lazy var editSteps: [AnyEditor<T>] = Transformer.editSteps(from: self.source, to: self.destination, withEditDistances: self.editDistances)
     
-    lazy var editDistances: [[Int]] = Transformer.editDistanceMatrix(from: self.source, to: self.destination)
-    
-    var minEditDistance: Int {
+    public var minEditDistance: Int {
         return editDistances[Int(source.count)][Int(destination.count)]
     }
-    
-    lazy var editSteps: [AnyEditor<T>] = Transformer.editSteps(from: self.source, to: self.destination, withEditDistances: self.editDistances)
 }
 
 public extension Transformer {
