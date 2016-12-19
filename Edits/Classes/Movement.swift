@@ -10,10 +10,12 @@ import Foundation
 
 public struct Movement<T: RangeReplaceableCollection>: Editor {
     
+    //MARK: Properties
     let moving: T.Iterator.Element
     let from: T.Index
     let to: T.Index
     
+    //MARK: Editor
     public func perform(with input: T) -> T {
         var output = input
         output.remove(at: from)

@@ -16,14 +16,17 @@ public protocol Editor: CustomStringConvertible {
 
 public struct AnyEditor<T: RangeReplaceableCollection>: Editor {
     
+    //MARK: Properties
     private let performer: (T) -> T
     private let desc: String
     
-    init<U: Editor>(editor: U) where U.EditedType == T {
+    //MARK: Initializers
+    init<E: Editor>(editor: E) where E.EditedType == T {
         performer = editor.perform
         desc = editor.description
     }
     
+    //MARK: Editor
     public func perform(with input: T) -> T {
         return performer(input)
     }
@@ -32,5 +35,4 @@ public struct AnyEditor<T: RangeReplaceableCollection>: Editor {
         return desc
     }
 }
-
 

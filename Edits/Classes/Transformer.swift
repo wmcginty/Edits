@@ -8,109 +8,163 @@
 
 import Foundation
 
-extension Collection where IndexDistance == Int {
-    func element(at idx: Int) -> Iterator.Element? {
-        return index(startIndex, offsetBy: idx, limitedBy: endIndex).map { self[$0] } ?? .none
-    }
-}
-
 public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance == Int, T.Iterator.Element: Equatable {
     
-    let source: T
-    let destination: T
+    //MARK: Properties
+    let sourceCollection: T
+    let destinationCollection: T
     
+    fileprivate lazy var editMatrix: TransformMatrix = Transformer.editDistanceMatrix(from: self.sourceCollection, to: self.destinationCollection)
+    
+    //MARK: Initializers
     public init(source: T, destination: T) {
-        self.source = source
-        self.destination = destination
+        sourceCollection = source
+        destinationCollection = destination
     }
 
-    fileprivate lazy var editDistances: [[Int]] = Transformer.editDistanceMatrix(from: self.source, to: self.destination)
-    public lazy var editSteps: [AnyEditor<T>] = Transformer.editSteps(from: self.source, to: self.destination, withEditDistances: self.editDistances)
-    
-    public var minEditDistance: Int {
-        return editDistances[Int(source.count)][Int(destination.count)]
-    }
+    //MARK: Computed Variables
+    public var minEditDistance: Int { return editSteps.count }
+    public lazy var editSteps: [AnyEditor<T>] = Transformer.edits(from: self.sourceCollection, to: self.destinationCollection, with: self.editMatrix)
 }
 
-public extension Transformer {
+//MARK: Interface
+extension Transformer {
     
-    public static func editDistanceMatrix(from source: T, to destination: T) -> [[Int]] {
+    static func editDistanceMatrix(from source: T, to destination: T) -> TransformMatrix {
         
-        let sourceLength = Int(source.count)
-        let destinationLength = Int(destination.count)
+        let rows = source.count
+        let columns = destination.count
+        var editDistances = TransformMatrix(rows: rows + 1, columns: columns + 1)
         
-        //TODO: That should be a seperated data structure (to abstract the arrayness)
-        var editDistances = preparedEditDistanceMatrix(withRows: sourceLength, columns: destinationLength)
-        
-        for i in 1...destinationLength {
-            for j in 1...sourceLength {
+        for row in 1...rows {
+            for column in 1...columns {
                 
-                //TODO: Seperate helper method? Internal methdo function?
-                let sourceIndex = source.index(source.startIndex, offsetBy: i - 1, limitedBy: source.endIndex)!
-                let destinationIndex = destination.index(destination.startIndex, offsetBy: j - 1, limitedBy: destination.endIndex)!
+                let coordinate = Coordinate(row: row, column: column)
+                let sourceComponent = source.element(atOffsetFromStartIndex: row - 1)
+                let destinationComponent = destination.element(atOffsetFromStartIndex: column - 1)
                 
-                let sourceComponent = source[sourceIndex]
-                let destinationComponent = destination[destinationIndex]
-                
-                editDistances[i][j] = sourceComponent == destinationComponent ? editDistances[i - 1][j - 1] : minimumTransformCount(forRow: i, column: j, in: editDistances) + 1
+                let update = editCount(for: coordinate, in: editDistances, whenComponentsEqual: sourceComponent == destinationComponent)
+                editDistances.set(value: update, at: coordinate)
             }
         }
         
         return editDistances
     }
     
-    public static func editSteps(from source: T, to destination: T, withEditDistances editDistances: [[Int]]) -> [AnyEditor<T>] {
-        
+    static func edits(from source: T, to destination: T, with matrix: TransformMatrix) -> [AnyEditor<T>] {
         var edits: [AnyEditor<T>] = []
+        var rangeAlteringEdits: [AnyRangeAlteringEditor<T>] = []
+        var coordinate = matrix.end
         
-        var row = Int(source.count)
-        var column = Int(destination.count)
-        
-        while editDistances[row][column] > 0 {
-            if row > 0 && column > 0 && source.element(at: row - 1) == destination.element(at: column - 1) {
-                //If the letters are the same, no edit is needed. Move to the next letter (diagonally up the table)
-                row -= 1; column -= 1
+        while matrix.value(for: coordinate) > 0 {
+            if coordinate.row > 0 && coordinate.column > 0 && source.element(atOffsetFromStartIndex: coordinate.row - 1) == destination.element(atOffsetFromStartIndex: coordinate.column - 1) {
+                //The two elements are the same, no edit required. Move diagonally up the matrix and repeat.
+                coordinate = coordinate.previousRow.previousColumn
             } else {
                 
-                let minEditCount = minimumTransformCount(forRow: row, column: column, in: editDistances)
-                if row > 0 && editDistances[row - 1][column] == minEditCount {
-                    row -= 1
-                    let deletion = Deletion<T>(deleted: source.element(at: row)!, index: source.index(source.startIndex, offsetBy: row, limitedBy: source.endIndex)!)
-                    edits.append(AnyEditor(editor: deletion))
-                } else if column > 0 && editDistances[row][column - 1] == minEditCount {
-                    column -= 1
-                    let insertion = Insertion<T>(inserted: destination.element(at: column)!, index: destination.index(destination.startIndex, offsetBy: column, limitedBy: destination.endIndex)!)
-                    edits.append(AnyEditor(editor: insertion))
+                switch minimumEditCount(neighboring: coordinate, in: matrix) {
+                case matrix[coordinate.previousRow] where coordinate.row > 0:
+                    //It would be optimal to move UP the matrix (meaning a deletion)
+                    coordinate = coordinate.previousRow
+                    rangeAlteringEdits.append(deletionEdit(from: source, for: coordinate))
+
+                case matrix[coordinate.previousColumn] where coordinate.column > 0:
+                    //It would be optimal to move LEFT in the matrix (meaning an insertion)
+                    coordinate = coordinate.previousColumn
+                    rangeAlteringEdits.append(insertionEdit(into: destination, for: coordinate))
                     
-                } else if row > 0 && column > 0 {
-                    row -= 1; column -= 1
-                    let substitution = Substitution<T>(from: source.element(at: row)!, to: destination.element(at: column)!, index: source.index(source.startIndex, offsetBy: row, limitedBy: source.endIndex)!)
-                    edits.append(AnyEditor(editor: substitution))
+                case _ where coordinate.row > 0 && coordinate.column > 0:
+                    //It would be optimal to move DIAGONALLY UP the matrix (meaning a substitution)
+                    coordinate = coordinate.previousRow.previousColumn
+                    edits.append(substitutionEdit(from: source, into: destination, for: coordinate))
+
+                default: continue
                 }
             }
         }
         
-        return edits
+        return edits + condensedRangeAlteringEdits(from: rangeAlteringEdits)
     }
 }
 
+//MARK: Editor Creation
 fileprivate extension Transformer {
     
-    static func preparedEditDistanceMatrix(withRows rows: Int, columns: Int) -> [[Int]] {
-        var result = [[Int]](repeating: [Int](repeating: 0, count: rows + 1), count: columns + 1)
-        (0...rows).map { result[$0][0] = $0 }
-        (0...columns).map { result[0][$0] = $0 }
+    static func deletionEdit(from source: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
+        guard let element = source.element(atOffsetFromStartIndex: coordinate.row),
+            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else { fatalError() }
         
-        return result
+        return AnyRangeAlteringEditor(editor: Deletion(deleted: element, index: index))
     }
     
-    static func minimumTransformCount(forRow row: Int, column: Int, in editDistances: [[Int]]) -> Int {
-        switch (row, column) {
-        case let (r, c) where r > 0 && c > 0: return min(editDistances[r - 1][c], editDistances[r][c - 1], editDistances[r - 1][c - 1])
-        case let (r, c) where r > 0: return editDistances[r - 1][c]
-        case let (r, c) where c > 0: return editDistances[r][c - 1]
+    static func insertionEdit(into destination: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
+        guard let element = destination.element(atOffsetFromStartIndex: coordinate.column),
+            let index = destination.index(destination.startIndex, offsetBy: coordinate.column, limitedBy: destination.endIndex) else { fatalError() }
+        
+        return AnyRangeAlteringEditor(editor: Insertion(inserted: element, index: index))
+    }
+    
+    static func substitutionEdit(from source: T, into destination: T, for coordinate: Coordinate) -> AnyEditor<T> {
+        guard let removed = source.element(atOffsetFromStartIndex: coordinate.row), let inserted = destination.element(atOffsetFromStartIndex: coordinate.column),
+            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else { fatalError() }
+        
+        return AnyEditor(editor: Substitution(from: removed, to: inserted, index: index))
+    }
+    
+    static func movementEdit(from lhs: AnyRangeAlteringEditor<T>, and rhs: AnyRangeAlteringEditor<T>) -> AnyEditor<T>? {
+        guard lhs.isAdditive == !rhs.isAdditive && lhs.alteredElement == rhs.alteredElement else { return .none }
+        
+        let sourceIndex = !lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
+        let destIndex = lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
+        
+        return AnyEditor(editor: Movement(moving: lhs.alteredElement, from: sourceIndex, to: destIndex))
+    }
+}
+
+//MARK: Helper
+fileprivate extension Transformer {
+    
+    static func editCount(for coordinate: Coordinate, in matrix: TransformMatrix, whenComponentsEqual equal: Bool) -> Int {
+        if equal {
+            return matrix[coordinate.previousRow.previousColumn]
+        } else {
+            return minimumEditCount(neighboring: coordinate, in: matrix) + 1
+        }
+    }
+    
+    static func minimumEditCount(neighboring coordinate: Coordinate, in matrix: TransformMatrix) -> Int {
+        switch (coordinate.row, coordinate.column) {
+        case let (r, c) where r > 0 && c > 0: return min(matrix[coordinate.previousRow], matrix[coordinate.previousColumn], matrix[coordinate.previousRow.previousColumn])
+        case let (r, c) where r > 0: return matrix[coordinate.previousRow]
+        case let (r, c) where c > 0: return matrix[coordinate.previousColumn]
         default: return 0
         }
+    }
+}
+
+//MARK: Movement Processing
+fileprivate extension Transformer {
+    
+    static func condensedRangeAlteringEdits(from edits: [AnyRangeAlteringEditor<T>]) -> [AnyEditor<T>] {
+        var rangeAlteringEdits = [AnyEditor<T>]()
+        var insertions = edits.filter { $0.isAdditive }
+        var deletions = edits.filter { !$0.isAdditive }
+        
+        for (i, insertion) in insertions.enumerated() {
+            for (j, deletion) in deletions.enumerated() {
+                if let movementEdit = movementEdit(from: insertion, and: deletion) {
+                    
+                    //We've created a movement by combining an insertion and deletion - modify our data store accordingly
+                    rangeAlteringEdits.append(movementEdit)
+                    deletions.remove(at: j)
+                    insertions.remove(at: i)
+                    
+                    break
+                }
+            }
+        }
+        
+        return rangeAlteringEdits + insertions.map { AnyEditor(editor: $0) } + deletions.map { AnyEditor(editor: $0) }
     }
 }
 
