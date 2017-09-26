@@ -15,34 +15,47 @@ public protocol RangeAlteringEditor: Editor {
     var alteredIndex: EditedType.Index { get }
 }
 
-public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteringEditor {
+public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteringEditor where T.IndexDistance == Int {
     
     //MARK: Properties
-    private let performer: (T) -> T
-    private let desc: String
-    
     public let source: T
+    private let editorDescription: String
+    
+    private let performer: (T) -> T
+    private let tableEdit: (Int, UITableView) -> Void
+    private let collectionEdit: (Int, UICollectionView) -> Void
+    
     public let isAdditive: Bool
     public let alteredElement: T.Iterator.Element
     public let alteredIndex: T.Index
     
     //MARK: Initializers
     init<E: RangeAlteringEditor>(editor: E) where E.EditedType == T {
-        performer = editor.perform
-        desc = editor.description
-        
         source = editor.source
+        editorDescription = editor.description
+        
+        performer = editor.perform
+        tableEdit = editor.edit
+        collectionEdit = editor.edit
+        
         alteredElement = editor.alteredElement
         isAdditive = editor.isAdditive
         alteredIndex = editor.alteredIndex
     }
+    
+    //MARK: CustomStringConvertible
+    public var description: String { return editorDescription }
     
     //MARK: Editor
     public func perform(with input: T) -> T {
         return performer(input)
     }
     
-    public var description: String {
-        return desc
+    public func edit(forSection section: Int, in tableView: UITableView) {
+        tableEdit(section, tableView)
+    }
+    
+    public func edit(forSection section: Int, in collectionView: UICollectionView) {
+        collectionEdit(section, collectionView)
     }
 }

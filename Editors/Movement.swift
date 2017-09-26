@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Movement<T: RangeReplaceableCollection>: Editor {
+public struct Movement<T: RangeReplaceableCollection>: Editor  where T.IndexDistance == Int {
     
     //MARK: Properties
     public let source: T
@@ -34,5 +34,21 @@ public struct Movement<T: RangeReplaceableCollection>: Editor {
     
     public var description: String {
         return "Move \(moving) from index \(source.distance(from: source.startIndex, to: from)) to index \(source.distance(from: source.startIndex, to: to))"
+    }
+    
+    public func edit(forSection section: Int, in tableView: UITableView) {
+        let remove = IndexPath(row: source.distance(from: source.startIndex, to: from), section: section)
+        tableView.deleteRows(at: [remove], with: .automatic)
+        
+        let add = IndexPath(row: source.distance(from: source.startIndex, to: to), section: section)
+        tableView.insertRows(at: [add], with: .automatic)
+    }
+    
+    public func edit(forSection section: Int, in collectionView: UICollectionView) {
+        let remove = IndexPath(item: source.distance(from: source.startIndex, to: from), section: section)
+        collectionView.deleteItems(at: [remove])
+        
+        let add = IndexPath(item: source.distance(from: source.startIndex, to: to), section: section)
+        collectionView.insertItems(at: [add])
     }
 }

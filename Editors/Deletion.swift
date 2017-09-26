@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor {
+public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor where T.IndexDistance == Int {
     
     //MARK: Properties
     public let source: T
@@ -21,6 +21,11 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor {
         self.index = index
     }
     
+    //MARK: Custom String Convertible
+    public var description: String {
+        return "Delete \(deleted) from position \(source.distance(from: source.startIndex, to: index))"
+    }
+    
     //MARK: Editor
     public func perform(with input: T) -> T {
         var output = input
@@ -29,8 +34,14 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor {
         return output
     }
     
-    public var description: String {
-        return "Delete \(deleted) from position \(source.distance(from: source.startIndex, to: index))"
+    public func edit(forSection section: Int, in tableView: UITableView) {
+        let path = IndexPath(row: source.distance(from: source.startIndex, to: index), section: section)
+        tableView.deleteRows(at: [path], with: .automatic)
+    }
+    
+    public func edit(forSection section: Int, in collectionView: UICollectionView) {
+        let path = IndexPath(item: source.distance(from: source.startIndex, to: index), section: section)
+        collectionView.deleteItems(at: [path])
     }
     
     //MARK: RangeAlteringEditor

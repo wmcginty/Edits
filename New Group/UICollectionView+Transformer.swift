@@ -10,8 +10,9 @@ import Foundation
 
 public extension UICollectionView {
     
-    func processUpdates<U>(for transformer: Transformer<U>, in section: Int) {
-        //let editSteps = transformer.editSteps
-        //TODO: Process the transforms
+    func processUpdates<U>(for transformer: Transformer<U>, inSection section: Int, completion: ((Bool) -> Void)? = nil) {
+        performBatchUpdates({
+            transformer.editSteps.forEach { $0.edit(forSection: section, in: self) }
+        }, completion: completion)
     }
 }

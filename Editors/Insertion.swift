@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor {
+public struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor  where T.IndexDistance == Int {
     
     //MARK: Properties
     public let source: T
@@ -31,6 +31,16 @@ public struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor {
     
     public var description: String {
         return "Insert \(inserted) at index \(source.distance(from: source.startIndex, to: index))"
+    }
+    
+    public func edit(forSection section: Int, in tableView: UITableView) {
+        let path = IndexPath(row: source.distance(from: source.startIndex, to: index), section: section)
+        tableView.insertRows(at: [path], with: .automatic)
+    }
+    
+    public func edit(forSection section: Int, in collectionView: UICollectionView) {
+        let path = IndexPath(item: source.distance(from: source.startIndex, to: index), section: section)
+        collectionView.insertItems(at: [path])
     }
     
     //MARK: RangeAlteringEditor

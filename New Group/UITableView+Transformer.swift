@@ -11,7 +11,8 @@ import UIKit
 public extension UITableView {
     
     func processUpdates<U>(for transformer: Transformer<U>, in section: Int) {
-        //let editSteps = transformer.editSteps
-        //TODO: Process the transforms
+        beginUpdates()
+        transformer.editSteps.forEach { $0.edit(forSection: section, in: self) }
+        endUpdates()
     }
 }

@@ -13,8 +13,8 @@ public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance ==
     //MARK: Properties
     let sourceCollection: T
     let destinationCollection: T
-    
-    fileprivate lazy var editMatrix: TransformMatrix = Transformer.editDistanceMatrix(from: self.sourceCollection, to: self.destinationCollection)
+    private lazy var editMatrix: TransformMatrix = Transformer.editDistanceMatrix(from: self.sourceCollection,
+                                                                                  to: self.destinationCollection)
     
     //MARK: Initializers
     public init(source: T, destination: T) {
@@ -31,7 +31,6 @@ public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance ==
 extension Transformer {
     
     static func editDistanceMatrix(from source: T, to destination: T) -> TransformMatrix {
-        
         let rows = source.count
         let columns = destination.count
         var editDistances = TransformMatrix(rows: rows + 1, columns: columns + 1)
@@ -89,7 +88,7 @@ extension Transformer {
 }
 
 //MARK: Editor Creation
-fileprivate extension Transformer {
+private extension Transformer {
     
     static func deletionEdit(from source: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
         guard let element = source.element(atOffsetFromStartIndex: coordinate.row),
@@ -130,7 +129,7 @@ fileprivate extension Transformer {
 }
 
 //MARK: Helper
-fileprivate extension Transformer {
+private extension Transformer {
     
     static func editCount(for coordinate: Coordinate, in matrix: TransformMatrix, whenComponentsEqual equal: Bool) -> Int {
         if equal {
@@ -151,7 +150,7 @@ fileprivate extension Transformer {
 }
 
 //MARK: Movement Processing
-fileprivate extension Transformer {
+private extension Transformer {
     
     static func condensedRangeAlteringEdits(from edits: [AnyRangeAlteringEditor<T>]) -> [AnyEditor<T>] {
         var rangeAlteringEdits = [AnyEditor<T>]()

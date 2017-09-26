@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Substitution<T: RangeReplaceableCollection>: Editor {
+public struct Substitution<T: RangeReplaceableCollection>: Editor  where T.IndexDistance == Int {
     
     //MARK: Properties
     public let source: T
@@ -34,5 +34,15 @@ public struct Substitution<T: RangeReplaceableCollection>: Editor {
     
     public var description: String {
         return "Substitute \(to) for the \(from) at index \(source.distance(from: source.startIndex, to: index))"
+    }
+    
+    public func edit(forSection section: Int, in tableView: UITableView) {
+        let path = IndexPath(row: source.distance(from: source.startIndex, to: index), section: section)
+        tableView.reloadRows(at: [path], with: .automatic)
+    }
+    
+    public func edit(forSection section: Int, in collectionView: UICollectionView) {
+        let path = IndexPath(item: source.distance(from: source.startIndex, to: index), section: section)
+        collectionView.reloadItems(at: [path])
     }
 }

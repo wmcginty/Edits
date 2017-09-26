@@ -10,33 +10,49 @@ import Foundation
 
 public protocol Editor: CustomStringConvertible {
     
-    associatedtype EditedType: RangeReplaceableCollection
+    associatedtype EditedType: RangeReplaceableCollection where EditedType.IndexDistance == Int
     
     var source: EditedType { get }
     func perform(with input: EditedType) -> EditedType
+    
+    func edit(forSection section: Int, in tableView: UITableView)
+    func edit(forSection section: Int, in collectionView: UICollectionView)
 }
 
-public struct AnyEditor<T: RangeReplaceableCollection>: Editor {
+public struct AnyEditor<T: RangeReplaceableCollection>: Editor where T.IndexDistance == Int {
     
     //MARK: Properties
-    private let performer: (T) -> T
-    private let desc: String
     public let source: T
+    private let editorDescription: String
+    
+    private let performer: (T) -> T
+    private let tableEdit: (Int, UITableView) -> Void
+    private let collectionEdit: (Int, UICollectionView) -> Void
     
     //MARK: Initializers
     init<E: Editor>(editor: E) where E.EditedType == T {
-        performer = editor.perform
-        desc = editor.description
         source = editor.source
+        editorDescription = editor.description
+        
+        performer = editor.perform
+        tableEdit = editor.edit
+        collectionEdit = editor.edit
     }
+    
+    //MARK: CustomStringConvertible
+    public var description: String { return editorDescription }
     
     //MARK: Editor
     public func perform(with input: T) -> T {
         return performer(input)
     }
     
-    public var description: String {
-        return desc
+    public func edit(forSection section: Int, in tableView: UITableView) {
+        tableEdit(section, tableView)
+    }
+    
+    public func edit(forSection section: Int, in collectionView: UICollectionView) {
+        collectionEdit(section, collectionView)
     }
 }
 
