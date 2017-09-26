@@ -30,6 +30,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let transformer3 = TransformerFactory.transformer(from: "racecar", to: "racer")
         print(transformer3.minEditDistance)
         print(transformer3.editSteps)
+        print()
+        
+        let transformer4 = TransformerFactory.transformer(from: [1,2,3,4,5], to: [2,3,4,5,1])
+        print(transformer4.minEditDistance)
+        print(transformer4.editSteps)
         
         return true
     }
