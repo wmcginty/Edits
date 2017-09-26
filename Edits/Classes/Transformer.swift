@@ -60,6 +60,7 @@ extension Transformer {
             if coordinate.row > 0 && coordinate.column > 0 && source.element(atOffsetFromStartIndex: coordinate.row - 1) == destination.element(atOffsetFromStartIndex: coordinate.column - 1) {
                 //The two elements are the same, no edit required. Move diagonally up the matrix and repeat.
                 coordinate = coordinate.inPreviousRow.inPreviousColumn
+                
             } else {
                 
                 switch minimumEditCount(neighboring: coordinate, in: matrix) {
@@ -92,32 +93,39 @@ fileprivate extension Transformer {
     
     static func deletionEdit(from source: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
         guard let element = source.element(atOffsetFromStartIndex: coordinate.row),
-            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else { fatalError() }
+            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else {
+                fatalError("Logic error - we have calculated a coordinate that should not exist")
+        }
         
-        return AnyRangeAlteringEditor(editor: Deletion(deleted: element, index: index))
+        return AnyRangeAlteringEditor(editor: Deletion(source: source, deleted: element, atIndex: index))
     }
     
-    static func insertionEdit(into destination: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
-        guard let element = destination.element(atOffsetFromStartIndex: coordinate.column),
-            let index = destination.index(destination.startIndex, offsetBy: coordinate.column, limitedBy: destination.endIndex) else { fatalError() }
+    static func insertionEdit(into source: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
+        guard let element = source.element(atOffsetFromStartIndex: coordinate.column),
+            let index = source.index(source.startIndex, offsetBy: coordinate.column, limitedBy: source.endIndex) else {
+                fatalError("Logic error - we have calculated a coordinate that should not exist")
+        }
         
-        return AnyRangeAlteringEditor(editor: Insertion(inserted: element, index: index))
+        return AnyRangeAlteringEditor(editor: Insertion(source: source, inserted: element, atIndex: index))
     }
     
     static func substitutionEdit(from source: T, into destination: T, for coordinate: Coordinate) -> AnyEditor<T> {
         guard let removed = source.element(atOffsetFromStartIndex: coordinate.row), let inserted = destination.element(atOffsetFromStartIndex: coordinate.column),
-            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else { fatalError() }
+            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else {
+                fatalError("Logic error - we have calculated a coordinate that should not exist")
+        }
         
-        return AnyEditor(editor: Substitution(from: removed, to: inserted, index: index))
+        return AnyEditor(editor: Substitution(source: source, from: removed, to: inserted, atIndex: index))
     }
     
     static func movementEdit(from lhs: AnyRangeAlteringEditor<T>, and rhs: AnyRangeAlteringEditor<T>) -> AnyEditor<T>? {
-        guard lhs.isAdditive == !rhs.isAdditive && lhs.alteredElement == rhs.alteredElement else { return .none }
+        guard lhs.isAdditive == !rhs.isAdditive && lhs.alteredElement == rhs.alteredElement else { return nil }
         
         let sourceIndex = !lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
         let destIndex = lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
         
-        return AnyEditor(editor: Movement(moving: lhs.alteredElement, from: sourceIndex, to: destIndex))
+        let move = Movement(source: lhs.source, move: lhs.alteredElement, fromIndex: sourceIndex, toIndex: destIndex)
+        return AnyEditor(editor: move)
     }
 }
 

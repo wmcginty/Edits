@@ -10,20 +10,24 @@ import Foundation
 
 public protocol Editor: CustomStringConvertible {
     
-    associatedtype EditedType: Collection
+    associatedtype EditedType: RangeReplaceableCollection
+    
+    var source: EditedType { get }
     func perform(with input: EditedType) -> EditedType
 }
 
-public struct AnyEditor<T: Collection>: Editor {
+public struct AnyEditor<T: RangeReplaceableCollection>: Editor {
     
     //MARK: Properties
     private let performer: (T) -> T
     private let desc: String
+    public let source: T
     
     //MARK: Initializers
     init<E: Editor>(editor: E) where E.EditedType == T {
         performer = editor.perform
         desc = editor.description
+        source = editor.source
     }
     
     //MARK: Editor

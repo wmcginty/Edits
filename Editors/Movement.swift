@@ -11,9 +11,17 @@ import Foundation
 public struct Movement<T: RangeReplaceableCollection>: Editor {
     
     //MARK: Properties
-    let moving: T.Iterator.Element
-    let from: T.Index
-    let to: T.Index
+    public let source: T
+    public let moving: T.Iterator.Element
+    public let from: T.Index
+    public let to: T.Index
+    
+    public init(source: T, move: T.Iterator.Element, fromIndex from: T.Index, toIndex to: T.Index) {
+        self.source = source
+        self.moving = move
+        self.from = from
+        self.to = to
+    }
     
     //MARK: Editor
     public func perform(with input: T) -> T {
@@ -25,6 +33,6 @@ public struct Movement<T: RangeReplaceableCollection>: Editor {
     }
     
     public var description: String {
-        return "Move \(moving) from index \(from) to index \(to)"
+        return "Move \(moving) from index \(source.distance(from: source.startIndex, to: from)) to index \(source.distance(from: source.startIndex, to: to))"
     }
 }

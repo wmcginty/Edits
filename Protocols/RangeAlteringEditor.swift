@@ -15,12 +15,13 @@ public protocol RangeAlteringEditor: Editor {
     var alteredIndex: EditedType.Index { get }
 }
 
-public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor {
+public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteringEditor {
     
     //MARK: Properties
     private let performer: (T) -> T
     private let desc: String
     
+    public let source: T
     public let isAdditive: Bool
     public let alteredElement: T.Iterator.Element
     public let alteredIndex: T.Index
@@ -30,6 +31,7 @@ public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor {
         performer = editor.perform
         desc = editor.description
         
+        source = editor.source
         alteredElement = editor.alteredElement
         isAdditive = editor.isAdditive
         alteredIndex = editor.alteredIndex
