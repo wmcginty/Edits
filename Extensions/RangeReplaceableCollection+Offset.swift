@@ -1,5 +1,5 @@
 //
-//  RangeReplaceableCollection.swift
+//  RangeReplaceableCollection+Offset.swift
 //  Pods
 //
 //  Created by William McGinty on 12/18/16.
@@ -11,10 +11,7 @@ import Foundation
 extension RangeReplaceableCollection where IndexDistance == Int {
     
     func element(atOffsetFromStartIndex offset: IndexDistance) -> Iterator.Element? {
-        if let idx = index(startIndex, offsetBy: offset, limitedBy: endIndex) {
-            return self[idx]
-        }
-        
-        return .none
+        guard let idx = index(startIndex, offsetBy: offset, limitedBy: endIndex) else { return nil }
+        return self[idx]
     }
 }

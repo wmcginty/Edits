@@ -10,20 +10,23 @@ import Foundation
 
 public struct Coordinate {
     
+    //MARK: Properties
     let row: Int
     let column: Int
     
+    //MARK: Initializers
     public init(row: Int, column: Int) {
         self.row = row
         self.column = column
     }
     
-    var previousColumn: Coordinate {
-        return Coordinate(row: row, column: column - 1)
+    //MARK: Interface
+    var inPreviousColumn: Coordinate {
+        return Coordinate(row: row, column: max(0, column - 1))
     }
     
-    var previousRow: Coordinate {
-        return Coordinate(row: row - 1, column: column)
+    var inPreviousRow: Coordinate {
+        return Coordinate(row: max(0, row - 1), column: column)
     }
 }
 
@@ -31,7 +34,6 @@ public struct TransformMatrix {
     
     //MARK: Properties
     fileprivate var storage: [[Int]]
-    
     var end: Coordinate { return Coordinate(row: storage.first!.count - 1, column: storage.count - 1) }
     
     //MARK: Initializers
@@ -48,7 +50,7 @@ public struct TransformMatrix {
 extension TransformMatrix {
 
     func value(for coordinate: Coordinate) -> Int {
-        return storage[max(0, min(coordinate.column, storage.count - 1))][max(0, min(coordinate.row, storage[0].count - 1))]
+        return storage[min(coordinate.column, max(0, storage.count - 1))][min(coordinate.row, max(0, storage[0].count - 1))]
     }
     
     mutating func set(value: Int, at coordinate: Coordinate) {
@@ -65,16 +67,17 @@ extension TransformMatrix {
 //MARK: Custom String Convertible
 extension TransformMatrix: CustomStringConvertible {
     
-    //TODO: This can be refined, depending on final requirements
     public var description: String {
-        var result = "\n"
-        for row in 0..<storage[0].count {
-            for col in 0..<storage.count {
-                result.append("\(value(for: Coordinate(row: row, column: col))) ")
+        let columnRange = 0..<(storage.first?.count ?? 1)
+        let columnResult = columnRange.reduce("") { accum, row in
+            let rowRange = 0..<storage.count
+            let rowResult: String = rowRange.reduce("") {
+                return $0 + "\(value(for: Coordinate(row: row, column: $1))) "
             }
-            result.append("\n")
+            
+            return accum + "\(rowResult)\n"
         }
         
-        return result
+        return columnResult
     }
 }

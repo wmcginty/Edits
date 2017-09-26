@@ -9,8 +9,8 @@
 import Foundation
 
 public protocol Editor: CustomStringConvertible {
-    associatedtype EditedType: RangeReplaceableCollection
     
+    associatedtype EditedType: RangeReplaceableCollection
     func perform(with input: EditedType) -> EditedType
 }
 

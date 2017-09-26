@@ -9,7 +9,6 @@
 import Foundation
 
 public protocol RangeAlteringEditor: Editor {
-    
     var isAdditive: Bool { get }
     
     var alteredElement: EditedType.Iterator.Element { get }

@@ -59,23 +59,23 @@ extension Transformer {
         while matrix.value(for: coordinate) > 0 {
             if coordinate.row > 0 && coordinate.column > 0 && source.element(atOffsetFromStartIndex: coordinate.row - 1) == destination.element(atOffsetFromStartIndex: coordinate.column - 1) {
                 //The two elements are the same, no edit required. Move diagonally up the matrix and repeat.
-                coordinate = coordinate.previousRow.previousColumn
+                coordinate = coordinate.inPreviousRow.inPreviousColumn
             } else {
                 
                 switch minimumEditCount(neighboring: coordinate, in: matrix) {
-                case matrix[coordinate.previousRow] where coordinate.row > 0:
+                case matrix[coordinate.inPreviousRow] where coordinate.row > 0:
                     //It would be optimal to move UP the matrix (meaning a deletion)
-                    coordinate = coordinate.previousRow
+                    coordinate = coordinate.inPreviousRow
                     rangeAlteringEdits.append(deletionEdit(from: source, for: coordinate))
 
-                case matrix[coordinate.previousColumn] where coordinate.column > 0:
+                case matrix[coordinate.inPreviousColumn] where coordinate.column > 0:
                     //It would be optimal to move LEFT in the matrix (meaning an insertion)
-                    coordinate = coordinate.previousColumn
+                    coordinate = coordinate.inPreviousColumn
                     rangeAlteringEdits.append(insertionEdit(into: destination, for: coordinate))
                     
                 case _ where coordinate.row > 0 && coordinate.column > 0:
                     //It would be optimal to move DIAGONALLY UP the matrix (meaning a substitution)
-                    coordinate = coordinate.previousRow.previousColumn
+                    coordinate = coordinate.inPreviousRow.inPreviousColumn
                     edits.append(substitutionEdit(from: source, into: destination, for: coordinate))
 
                 default: continue
@@ -126,7 +126,7 @@ fileprivate extension Transformer {
     
     static func editCount(for coordinate: Coordinate, in matrix: TransformMatrix, whenComponentsEqual equal: Bool) -> Int {
         if equal {
-            return matrix[coordinate.previousRow.previousColumn]
+            return matrix[coordinate.inPreviousRow.inPreviousColumn]
         } else {
             return minimumEditCount(neighboring: coordinate, in: matrix) + 1
         }
@@ -134,9 +134,9 @@ fileprivate extension Transformer {
     
     static func minimumEditCount(neighboring coordinate: Coordinate, in matrix: TransformMatrix) -> Int {
         switch (coordinate.row, coordinate.column) {
-        case let (r, c) where r > 0 && c > 0: return min(matrix[coordinate.previousRow], matrix[coordinate.previousColumn], matrix[coordinate.previousRow.previousColumn])
-        case let (r, _) where r > 0: return matrix[coordinate.previousRow]
-        case let (_, c) where c > 0: return matrix[coordinate.previousColumn]
+        case let (r, c) where r > 0 && c > 0: return min(matrix[coordinate.inPreviousRow], matrix[coordinate.inPreviousColumn], matrix[coordinate.inPreviousRow.inPreviousColumn])
+        case let (r, _) where r > 0: return matrix[coordinate.inPreviousRow]
+        case let (_, c) where c > 0: return matrix[coordinate.inPreviousColumn]
         default: return 0
         }
     }
