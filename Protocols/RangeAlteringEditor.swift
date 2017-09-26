@@ -15,7 +15,7 @@ public protocol RangeAlteringEditor: Editor {
     var alteredIndex: EditedType.Index { get }
 }
 
-public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteringEditor {
+public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor {
     
     //MARK: Properties
     private let performer: (T) -> T
