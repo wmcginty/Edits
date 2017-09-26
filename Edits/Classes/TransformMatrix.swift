@@ -37,8 +37,8 @@ public struct TransformMatrix {
     //MARK: Initializers
     init(rows: Int, columns: Int) {
         var internalStore = [[Int]](repeating: [Int](repeating: 0, count: rows), count: columns)
-        (0..<rows).map { internalStore[0][$0] = $0 }
-        (0..<columns).map { internalStore[$0][0] = $0 }
+        (0..<rows).forEach { internalStore[0][$0] = $0 }
+        (0..<columns).forEach { internalStore[$0][0] = $0 }
         
         storage = internalStore
     }

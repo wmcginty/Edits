@@ -14,7 +14,7 @@ public struct TransformerFactory {
         return transformer(from: from.characters, to: to.characters)
     }
     
-    public static func transformer<T: RangeReplaceableCollection>(from: T, to: T) -> Transformer<T> where T.IndexDistance == Int, T.Iterator.Element: Equatable {
+    public static func transformer<T: RangeReplaceableCollection>(from: T, to: T) -> Transformer<T> where T.IndexDistance == Int {
         return Transformer(source: from, destination: to)
     }
 }

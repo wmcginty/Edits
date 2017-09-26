@@ -135,8 +135,8 @@ fileprivate extension Transformer {
     static func minimumEditCount(neighboring coordinate: Coordinate, in matrix: TransformMatrix) -> Int {
         switch (coordinate.row, coordinate.column) {
         case let (r, c) where r > 0 && c > 0: return min(matrix[coordinate.previousRow], matrix[coordinate.previousColumn], matrix[coordinate.previousRow.previousColumn])
-        case let (r, c) where r > 0: return matrix[coordinate.previousRow]
-        case let (r, c) where c > 0: return matrix[coordinate.previousColumn]
+        case let (r, _) where r > 0: return matrix[coordinate.previousRow]
+        case let (_, c) where c > 0: return matrix[coordinate.previousColumn]
         default: return 0
         }
     }

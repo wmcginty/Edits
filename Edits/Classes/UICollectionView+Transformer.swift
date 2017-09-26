@@ -11,7 +11,7 @@ import Foundation
 public extension UICollectionView {
     
     func processUpdates<U>(for transformer: Transformer<U>, in section: Int) {
-        let editSteps = transformer.editSteps
+        //let editSteps = transformer.editSteps
         //TODO: Process the transforms
     }
 }
