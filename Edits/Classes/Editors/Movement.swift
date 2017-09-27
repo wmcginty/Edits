@@ -37,18 +37,14 @@ public struct Movement<T: RangeReplaceableCollection>: Editor  where T.IndexDist
     }
     
     public func edit(forSection section: Int, in tableView: UITableView) {
-        let remove = IndexPath(row: source.distance(from: source.startIndex, to: from), section: section)
-        tableView.deleteRows(at: [remove], with: .automatic)
-        
-        let add = IndexPath(row: source.distance(from: source.startIndex, to: to), section: section)
-        tableView.insertRows(at: [add], with: .automatic)
+        let sourcePath = IndexPath(row: source.distance(from: source.startIndex, to: from), section: section)
+        let destinationPath = IndexPath(row: source.distance(from: source.startIndex, to: to), section: section)
+        tableView.moveRow(at: sourcePath, to: destinationPath)
     }
     
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
-        let remove = IndexPath(item: source.distance(from: source.startIndex, to: from), section: section)
-        collectionView.deleteItems(at: [remove])
-        
-        let add = IndexPath(item: source.distance(from: source.startIndex, to: to), section: section)
-        collectionView.insertItems(at: [add])
+        let sourcePath = IndexPath(item: source.distance(from: source.startIndex, to: from), section: section)
+        let destinationPath = IndexPath(item: source.distance(from: source.startIndex, to: to), section: section)
+        collectionView.moveItem(at: sourcePath, to: destinationPath)
     }
 }
