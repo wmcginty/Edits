@@ -11,13 +11,13 @@ import UIKit
 public extension UITableView {
     
     @available(iOS 11, *)
-    func processUpdates<U>(for transformer: Transformer<U>, in section: Int, completion: ((Bool) -> Void)? = nil) {
+    func processUpdates<U>(for transformer: Transformer<U>, inSection section: Int, completion: ((Bool) -> Void)? = nil) {
         performBatchUpdates({
             transformer.editSteps.forEach { $0.edit(forSection: section, in: self) }
         }, completion: completion)
     }
     
-    func processUpdates<U>(for transformer: Transformer<U>, in section: Int) {
+    func processUpdates<U>(for transformer: Transformer<U>, inSection section: Int) {
         beginUpdates()
         transformer.editSteps.forEach { $0.edit(forSection: section, in: self) }
         endUpdates()
