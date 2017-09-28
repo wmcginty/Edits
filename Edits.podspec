@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-A mini-framework to determine the smallest set of edits between two collections.
+Edits is a small framework designed to simplify the process of creating visually pleasing transitions between collections. Especially designed with UITableView and UICollectionView in mind, Edits will make it incredibly easy to create attractive transitions between collections.
                        DESC
 
   s.homepage         = 'https://github.com/wmcginty/Edits'
