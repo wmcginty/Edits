@@ -11,38 +11,32 @@ import Foundation
 public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
-    let sourceCollection: T
-    let destinationCollection: T
-    private lazy var editMatrix: TransformMatrix = Transformer.editDistanceMatrix(from: self.sourceCollection,
-                                                                                  to: self.destinationCollection)
+    let source: T
+    let destination: T
+    private lazy var editMatrix: TransformMatrix = Transformer.editDistanceMatrix(from: self.source, to: self.destination)
     
     //MARK: Initializers
     public init(source: T, destination: T) {
-        sourceCollection = source
-        destinationCollection = destination
+        self.source = source
+        self.destination = destination
     }
 
     //MARK: Computed Variables
     public var minEditDistance: Int { return editSteps.count }
-    public lazy var editSteps: [AnyEditor<T>] = Transformer.edits(from: self.sourceCollection, to: self.destinationCollection, with: self.editMatrix)
+    public lazy var editSteps: [AnyEditor<T>] = Transformer.edits(from: self.source, to: self.destination, with: self.editMatrix)
 }
 
 //MARK: Interface
 extension Transformer {
     
     static func editDistanceMatrix(from source: T, to destination: T) -> TransformMatrix {
-        let rows = source.count
-        let columns = destination.count
-        var editDistances = TransformMatrix(rows: rows + 1, columns: columns + 1)
+        var editDistances = TransformMatrix(rows: source.count + 1, columns: destination.count + 1)
         
-        for row in 1...rows {
-            for column in 1...columns {
+        for row in 1...source.count {
+            for column in 1...destination.count {
                 
                 let coordinate = Coordinate(row: row, column: column)
-                let sourceComponent = source[atOffset: row - 1]
-                let destinationComponent = destination[atOffset: column - 1]
-                
-                let update = editCount(for: coordinate, in: editDistances, whenComponentsEqual: sourceComponent == destinationComponent)
+                let update = editCount(for: coordinate, in: editDistances, whenComponentsEqual: source[atOffset: row - 1] == destination[atOffset: column - 1])
                 editDistances.set(value: update, at: coordinate)
             }
         }
@@ -166,7 +160,6 @@ private extension Transformer {
             unpairedInsertions.append(insertion)
         }
         
-        return rangeAlteringEdits + unpairedInsertions.map { AnyEditor(editor: $0) } + availableDeletions.map { AnyEditor(editor: $0) }
+        return rangeAlteringEdits + unpairedInsertions.map(AnyEditor.init) + availableDeletions.map(AnyEditor.init)
     }
 }
-
