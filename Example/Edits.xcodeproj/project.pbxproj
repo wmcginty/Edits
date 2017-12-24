@@ -15,6 +15,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		B2071951DF6DA45EBE27F75A /* Pods_Edits_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552A28E1BEB74ADCE3046154 /* Pods_Edits_Example.framework */; };
+		B41BE7591FF059F200A7A924 /* InterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BE7561FF059CF00A7A924 /* InterfaceTests.swift */; };
 		B49BCCA71FEFD10E0079AD1D /* ExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BCCA51FEFD1080079AD1D /* ExtensionTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +46,7 @@
 		843064C5252434E904174D33 /* Pods-Edits_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Edits_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Edits_Example/Pods-Edits_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		A17522078AD86F21E26EFD30 /* Pods-Edits_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Edits_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Edits_Example/Pods-Edits_Example.release.xcconfig"; sourceTree = "<group>"; };
 		A9798AC37588C2E66D36F9A8 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		B41BE7561FF059CF00A7A924 /* InterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceTests.swift; sourceTree = "<group>"; };
 		B49BCCA51FEFD1080079AD1D /* ExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionTests.swift; sourceTree = "<group>"; };
 		B88CA47DAD0FAD8E823A72DE /* Pods_Edits_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Edits_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E26E4DE10B3241D2BF41B0AF /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				B49BCCA51FEFD1080079AD1D /* ExtensionTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				B41BE7561FF059CF00A7A924 /* InterfaceTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -382,6 +385,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B41BE7591FF059F200A7A924 /* InterfaceTests.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
 				B49BCCA71FEFD10E0079AD1D /* ExtensionTests.swift in Sources */,
 			);

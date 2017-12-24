@@ -41,16 +41,20 @@ public struct Movement<T: RangeReplaceableCollection>: Editor, Equatable where T
         return output
     }
     
+    func sourceIndexPath(forSection section: Int) -> IndexPath {
+        return IndexPath(item: from, section: section)
+    }
+    
+    func destinationIndexPath(forSection section: Int) -> IndexPath {
+        return IndexPath(item: to, section: section)
+    }
+    
     public func edit(forSection section: Int, in tableView: UITableView) {
-        let sourcePath = IndexPath(row: from, section: section)
-        let destinationPath = IndexPath(row: to, section: section)
-        tableView.moveRow(at: sourcePath, to: destinationPath)
+        tableView.moveRow(at: sourceIndexPath(forSection: section), to: destinationIndexPath(forSection: section))
     }
     
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
-        let sourcePath = IndexPath(item: from, section: section)
-        let destinationPath = IndexPath(item: to, section: section)
-        collectionView.moveItem(at: sourcePath, to: destinationPath)
+        collectionView.moveItem(at: sourceIndexPath(forSection: section), to: destinationIndexPath(forSection: section))
     }
     
     //MARK: Equatable

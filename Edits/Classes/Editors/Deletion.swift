@@ -37,14 +37,16 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equa
         return output
     }
     
+    func affectedIndexPath(forSection section: Int) -> IndexPath {
+        return IndexPath(item: offset, section: section)
+    }
+    
     public func edit(forSection section: Int, in tableView: UITableView) {
-        let path = IndexPath(row: offset, section: section)
-        tableView.deleteRows(at: [path], with: .automatic)
+        tableView.deleteRows(at: [affectedIndexPath(forSection: section)], with: .automatic)
     }
     
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
-        let path = IndexPath(item: offset, section: section)
-        collectionView.deleteItems(at: [path])
+        collectionView.deleteItems(at: [affectedIndexPath(forSection: section)])
     }
     
     //MARK: RangeAlteringEditor

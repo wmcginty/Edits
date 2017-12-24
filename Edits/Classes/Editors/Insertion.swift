@@ -37,15 +37,16 @@ public struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equ
         return output
     }
     
-    //MARK: Interface
+    func affectedIndexPath(forSection section: Int) -> IndexPath {
+        return IndexPath(item: offset, section: section)
+    }
+    
     public func edit(forSection section: Int, in tableView: UITableView) {
-        let path = IndexPath(row: offset, section: section)
-        tableView.insertRows(at: [path], with: .automatic)
+        tableView.insertRows(at: [affectedIndexPath(forSection: section)], with: .automatic)
     }
     
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
-        let path = IndexPath(item: offset, section: section)
-        collectionView.insertItems(at: [path])
+        collectionView.insertItems(at: [affectedIndexPath(forSection: section)])
     }
     
     //MARK: RangeAlteringEditor

@@ -40,14 +40,16 @@ public struct Substitution<T: RangeReplaceableCollection>: Editor, Equatable whe
         return output
     }
     
+    func affectedIndexPath(forSection section: Int) -> IndexPath {
+        return IndexPath(item: offset, section: section)
+    }
+    
     public func edit(forSection section: Int, in tableView: UITableView) {
-        let path = IndexPath(row: offset, section: section)
-        tableView.reloadRows(at: [path], with: .automatic)
+        tableView.reloadRows(at: [affectedIndexPath(forSection: section)], with: .automatic)
     }
     
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
-        let path = IndexPath(item: offset, section: section)
-        collectionView.reloadItems(at: [path])
+        collectionView.reloadItems(at: [affectedIndexPath(forSection: section)])
     }
     
     //MARK: Equatable
