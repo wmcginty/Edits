@@ -8,17 +8,23 @@
 
 import Foundation
 
+/// An object capable of transforming a collection in a pre-defined way.
 public protocol Editor: CustomStringConvertible  {
     
     associatedtype EditedType: Collection where EditedType.Element: Equatable
     
-    //var source: EditedType { get }
+    
+    /// Performs the editors specific transformation. Leaves the input unaffected.
+    ///
+    /// - Parameter input: The source of the edit. Is unaffected by the transformation.
+    /// - Returns: The output of this single transformation.
     func perform(with input: EditedType) -> EditedType
     
     func edit(forSection section: Int, in tableView: UITableView)
     func edit(forSection section: Int, in collectionView: UICollectionView)
 }
 
+/// A type-erased wrapper struct around the Deletion, Insertion, Substitution and Movement edits. While their individual type can not be queried, their edit can be performed on any input.
 public struct AnyEditor<T: RangeReplaceableCollection>: Editor where T.Element: Equatable {
     
     //MARK: Properties

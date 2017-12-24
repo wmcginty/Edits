@@ -11,23 +11,38 @@ import Foundation
 public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
+    
+    /// The collection at which the transformation should begin.
     let source: T
+    
+    /// The collection at which the transformation should edit toward.
     let destination: T
     private lazy var editMatrix: TransformMatrix = Transformer.editDistanceMatrix(from: self.source, to: self.destination)
     
     //MARK: Initializers
+    
+    
+    /// Initialize a new Transformer object with a given source and destination.
+    ///
+    /// - Parameters:
+    ///   - source: The source of the transformation.
+    ///   - destination: The desired destination for the transformation.
     public init(source: T, destination: T) {
         self.source = source
         self.destination = destination
     }
 
     //MARK: Computed Variables
+    
+    /// The minimum number of changes needed to convert the source into the destination. Computed using the Levenshtein Distance algorithm.
     public var minEditDistance: Int { return editSteps.count }
+    
+    /// The steps involved in transforming the source to the destination. Lazily calculated.
     public lazy var editSteps: [AnyEditor<T>] = Transformer.edits(from: self.source, to: self.destination, with: self.editMatrix)
 }
 
 //MARK: Interface
-extension Transformer {
+private extension Transformer {
     
     static func editDistanceMatrix(from source: T, to destination: T) -> TransformMatrix {
         var editDistances = TransformMatrix(rows: source.count + 1, columns: destination.count + 1)

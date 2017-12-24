@@ -8,14 +8,14 @@
 
 import Foundation
 
-public struct Coordinate {
+struct Coordinate {
     
     //MARK: Properties
     let row: Int
     let column: Int
     
     //MARK: Initializers
-    public init(row: Int, column: Int) {
+    init(row: Int, column: Int) {
         self.row = row
         self.column = column
     }
@@ -30,10 +30,10 @@ public struct Coordinate {
     }
 }
 
-public struct TransformMatrix {
+struct TransformMatrix {
     
     //MARK: Properties
-    fileprivate var storage: [[Int]]
+    private var storage: [[Int]]
     var end: Coordinate { return Coordinate(row: storage[0].count - 1, column: storage.count - 1) }
     
     //MARK: Initializers
@@ -65,7 +65,7 @@ extension TransformMatrix {
 //MARK: Custom String Convertible
 extension TransformMatrix: CustomStringConvertible {
     
-    public var description: String {
+    var description: String {
         let columnRange = 0..<(storage.first?.count ?? 1)
         let columnResult = columnRange.reduce("") { accum, row in
             let rowRange = 0..<storage.count
