@@ -22,6 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(transformer1.editSteps)
         print()
         
+        let tv = UITableView(frame: .zero)
+        tv.processUpdates(for: transformer1, inSection: 0)
+        
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        cv.processUpdates(for: transformer1, inSection: 0)
+        
         let transformer2 = Transformer(source: "words", destination: "sword")
         print(transformer2.minEditDistance)
         print(transformer2.editSteps)

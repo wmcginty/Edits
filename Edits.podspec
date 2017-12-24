@@ -22,20 +22,11 @@ Edits is a small framework designed to simplify the process of creating visually
                        DESC
 
   s.homepage         = 'https://github.com/wmcginty/Edits'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'William McGinty' => 'mcgintw@gmail.com' }
   s.source           = { :git => 'https://github.com/wmcginty/Edits.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '8.3'
-
+  s.ios.deployment_target = '8.0'
   s.source_files = 'Edits/Classes/**/*'
-
-  # s.resource_bundles = {
-  #   'Edits' => ['Edits/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  s.frameworks = 'UIKit'
 end
