@@ -15,18 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        
         let transformer1 = Transformer(source: "hello", destination: "olleh")
         print(transformer1.minEditDistance)
         print(transformer1.editSteps)
         print()
-        
-        let tv = UITableView(frame: .zero)
-        tv.processUpdates(for: transformer1, inSection: 0)
-        
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        cv.processUpdates(for: transformer1, inSection: 0)
         
         let transformer2 = Transformer(source: "words", destination: "sword")
         print(transformer2.minEditDistance)
