@@ -11,44 +11,47 @@ import Foundation
 public struct Substitution<T: RangeReplaceableCollection>: Editor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
-    public let source: T
     public let from: T.Element
     public let to: T.Element
-    public let index: T.Index
+    public let offset: T.IndexDistance
     
     public init(source: T, from: T.Element, to: T.Element, atIndex index: T.Index) {
-        self.source = source
+        let offset = source.distance(from: source.startIndex, to: index)
+        self.init(from: from, to: to, atIndexOffset: offset)
+    }
+    
+    public init(from: T.Element, to: T.Element, atIndexOffset offset: T.IndexDistance) {
         self.from = from
         self.to = to
-        self.index = index
+        self.offset = offset
     }
     
     //MARK: CustomStringConvertible
     public var description: String {
-        return "Substitute \(to) for the \(from) at index \(source.distance(from: source.startIndex, to: index))"
+        return "Substitute \(to) for the \(from) at index \(offset)"
     }
     
     //MARK: Editor
     public func perform(with input: T) -> T {
         var output = input
-        output.remove(at: index)
-        output.insert(to, at: index)
+        output.remove(at: input.index(input.startIndex, offsetBy: offset))
+        output.insert(to, at: input.index(input.startIndex, offsetBy: offset))
         
         return output
     }
     
     public func edit(forSection section: Int, in tableView: UITableView) {
-        let path = IndexPath(row: source.distance(from: source.startIndex, to: index), section: section)
+        let path = IndexPath(row: offset, section: section)
         tableView.reloadRows(at: [path], with: .automatic)
     }
     
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
-        let path = IndexPath(item: source.distance(from: source.startIndex, to: index), section: section)
+        let path = IndexPath(item: offset, section: section)
         collectionView.reloadItems(at: [path])
     }
     
     //MARK: Equatable
     public static func ==(lhs: Substitution<T>, rhs: Substitution<T>) -> Bool {
-        return lhs.from == rhs.from && lhs.to == rhs.to && lhs.index == rhs.index
+        return lhs.from == rhs.from && lhs.to == rhs.to && lhs.offset == rhs.offset
     }
 }

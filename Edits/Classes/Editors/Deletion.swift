@@ -11,46 +11,49 @@ import Foundation
 public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
-    public let source: T
     public let deleted: T.Element
-    public let index: T.Index
+    public let offset: T.IndexDistance
     
     public init(source: T, deleted: T.Element, atIndex index: T.Index) {
-        self.source = source
+        let offset = source.distance(from: source.startIndex, to: index)
+        self.init(deleted: deleted, atIndexOffset: offset)
+    }
+    
+    public init(deleted: T.Element, atIndexOffset offset: T.IndexDistance) {
         self.deleted = deleted
-        self.index = index
+        self.offset = offset
     }
     
     //MARK: CustomStringConvertible
     public var description: String {
-        return "Delete \(deleted) from position \(source.distance(from: source.startIndex, to: index))"
+        return "Delete \(deleted) from position \(offset)"
     }
     
     //MARK: Editor
     public func perform(with input: T) -> T {
         var output = input
-        output.remove(at: index)
+        output.remove(at: input.index(input.startIndex, offsetBy: offset))
         
         return output
     }
     
     public func edit(forSection section: Int, in tableView: UITableView) {
-        let path = IndexPath(row: source.distance(from: source.startIndex, to: index), section: section)
+        let path = IndexPath(row: offset, section: section)
         tableView.deleteRows(at: [path], with: .automatic)
     }
     
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
-        let path = IndexPath(item: source.distance(from: source.startIndex, to: index), section: section)
+        let path = IndexPath(item: offset, section: section)
         collectionView.deleteItems(at: [path])
     }
     
     //MARK: RangeAlteringEditor
     public var isAdditive: Bool { return false }
     public var alteredElement: T.Element { return deleted }
-    public var alteredIndex: T.Index { return index }
+    public var alteredIndexOffset: T.IndexDistance { return offset }
     
     //MARK: Equatable
     public static func ==(lhs: Deletion<T>, rhs: Deletion<T>) -> Bool {
-        return lhs.alteredElement == rhs.alteredElement && lhs.alteredIndex == rhs.alteredIndex
+        return lhs.alteredElement == rhs.alteredElement && lhs.alteredIndexOffset == rhs.alteredIndexOffset
     }
 }

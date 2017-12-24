@@ -12,7 +12,7 @@ public protocol Editor: CustomStringConvertible  {
     
     associatedtype EditedType: Collection where EditedType.Element: Equatable
     
-    var source: EditedType { get }
+    //var source: EditedType { get }
     func perform(with input: EditedType) -> EditedType
     
     func edit(forSection section: Int, in tableView: UITableView)
@@ -22,7 +22,6 @@ public protocol Editor: CustomStringConvertible  {
 public struct AnyEditor<T: RangeReplaceableCollection>: Editor where T.Element: Equatable {
     
     //MARK: Properties
-    public let source: T
     private let editorDescription: String
     
     private let performer: (T) -> T
@@ -31,7 +30,6 @@ public struct AnyEditor<T: RangeReplaceableCollection>: Editor where T.Element: 
     
     //MARK: Initializers
     init<E: Editor>(editor: E) where E.EditedType == T {
-        source = editor.source
         editorDescription = editor.description
         
         performer = editor.perform

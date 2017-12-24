@@ -118,11 +118,10 @@ private extension Transformer {
     static func movementEdit(from lhs: AnyRangeAlteringEditor<T>, and rhs: AnyRangeAlteringEditor<T>) -> AnyEditor<T>? {
         guard lhs.isAdditive != rhs.isAdditive && lhs.alteredElement == rhs.alteredElement else { return nil }
         
-        let sourceIndex = !lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
-        let destIndex = lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
-        
-        let move = Movement(source: lhs.source, move: lhs.alteredElement, fromIndex: sourceIndex, toIndex: destIndex)
-        return AnyEditor(editor: move)
+        let sourceOffset = !lhs.isAdditive ? lhs.alteredIndexOffset : rhs.alteredIndexOffset
+        let destOffset = lhs.isAdditive ? lhs.alteredIndexOffset : rhs.alteredIndexOffset
+
+        return AnyEditor(editor: Movement<T>(move: lhs.alteredElement, fromIndexOffset: sourceOffset, toIndexOffset: destOffset))
     }
 }
 

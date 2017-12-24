@@ -12,13 +12,12 @@ public protocol RangeAlteringEditor: Editor {
     var isAdditive: Bool { get }
     
     var alteredElement: EditedType.Element { get }
-    var alteredIndex: EditedType.Index { get }
+    var alteredIndexOffset: EditedType.IndexDistance { get }
 }
 
 public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor where T.Element: Equatable {
     
     //MARK: Properties
-    public let source: T
     private let editorDescription: String
     
     private let performer: (T) -> T
@@ -27,11 +26,10 @@ public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor where T
     
     public let isAdditive: Bool
     public let alteredElement: T.Element
-    public let alteredIndex: T.Index
+    public let alteredIndexOffset: T.IndexDistance
     
     //MARK: Initializers
     init<E: RangeAlteringEditor>(editor: E) where E.EditedType == T {
-        source = editor.source
         editorDescription = editor.description
         
         performer = editor.perform
@@ -40,7 +38,7 @@ public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor where T
         
         alteredElement = editor.alteredElement
         isAdditive = editor.isAdditive
-        alteredIndex = editor.alteredIndex
+        alteredIndexOffset = editor.alteredIndexOffset
     }
     
     //MARK: CustomStringConvertible
