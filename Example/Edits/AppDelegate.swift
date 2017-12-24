@@ -17,22 +17,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        let transformer1 = TransformerFactory.transformer(from: "hello", to: "olleh")
+        let transformer1 = Transformer(source: "hello", destination: "olleh")
         print(transformer1.minEditDistance)
         print(transformer1.editSteps)
         print()
         
-        let transformer2 = TransformerFactory.transformer(from: "words", to: "sword")
+        let transformer2 = Transformer(source: "words", destination: "sword")
         print(transformer2.minEditDistance)
         print(transformer2.editSteps)
         print()
         
-        let transformer3 = TransformerFactory.transformer(from: "racecar", to: "racer")
+        let transformer3 = Transformer(source: "racecar", destination: "racer")
         print(transformer3.minEditDistance)
         print(transformer3.editSteps)
         print()
         
-        let transformer4 = TransformerFactory.transformer(from: [1,2,3,4,5], to: [2,3,4,5,1])
+        let transformer4 = Transformer(source: [1,2,3,4,5], destination: [2,3,4,5,1])
         print(transformer4.minEditDistance)
         print(transformer4.editSteps)
         

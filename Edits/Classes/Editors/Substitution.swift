@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Substitution<T: RangeReplaceableCollection>: Editor  where T.IndexDistance == Int {
+public struct Substitution<T: RangeReplaceableCollection>: Editor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
     public let source: T
@@ -23,6 +23,11 @@ public struct Substitution<T: RangeReplaceableCollection>: Editor  where T.Index
         self.index = index
     }
     
+    //MARK: CustomStringConvertible
+    public var description: String {
+        return "Substitute \(to) for the \(from) at index \(source.distance(from: source.startIndex, to: index))"
+    }
+    
     //MARK: Editor
     public func perform(with input: T) -> T {
         var output = input
@@ -30,10 +35,6 @@ public struct Substitution<T: RangeReplaceableCollection>: Editor  where T.Index
         output.insert(to, at: index)
         
         return output
-    }
-    
-    public var description: String {
-        return "Substitute \(to) for the \(from) at index \(source.distance(from: source.startIndex, to: index))"
     }
     
     public func edit(forSection section: Int, in tableView: UITableView) {
@@ -44,5 +45,10 @@ public struct Substitution<T: RangeReplaceableCollection>: Editor  where T.Index
     public func edit(forSection section: Int, in collectionView: UICollectionView) {
         let path = IndexPath(item: source.distance(from: source.startIndex, to: index), section: section)
         collectionView.reloadItems(at: [path])
+    }
+    
+    //MARK: Equatable
+    public static func ==(lhs: Substitution<T>, rhs: Substitution<T>) -> Bool {
+        return lhs.from == rhs.from && lhs.to == rhs.to && lhs.index == rhs.index
     }
 }

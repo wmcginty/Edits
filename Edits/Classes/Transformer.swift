@@ -126,6 +126,16 @@ private extension Transformer {
         let move = Movement(source: lhs.source, move: lhs.alteredElement, fromIndex: sourceIndex, toIndex: destIndex)
         return AnyEditor(editor: move)
     }
+    
+//    static func movementEdit(from lhs: AnyRangeAlteringEditor<T>, and rhs: [AnyRangeAlteringEditor<T>]) -> AnyEditor<T>? {
+//        for r in rhs {
+//            if let move = movementEdit(from: lhs, and: r) {
+//                return move
+//            }
+//        }
+//
+//        return nil
+//    }
 }
 
 //MARK: Helper
@@ -154,24 +164,25 @@ private extension Transformer {
     
     static func condensedRangeAlteringEdits(from edits: [AnyRangeAlteringEditor<T>]) -> [AnyEditor<T>] {
         var rangeAlteringEdits = [AnyEditor<T>]()
-        var insertions = edits.filter { $0.isAdditive }
-        var deletions = edits.filter { !$0.isAdditive }
-        
-        for (i, insertion) in insertions.enumerated() {
-            for (j, deletion) in deletions.enumerated() {
-                if let movementEdit = movementEdit(from: insertion, and: deletion) {
-                    
-                    //We've created a movement by combining an insertion and deletion - modify our data store accordingly
-                    rangeAlteringEdits.append(movementEdit)
-                    deletions.remove(at: j)
-                    insertions.remove(at: i)
-                    
-                    break
+        var (insertions, availableDeletions) = edits.bifilter { $0.isAdditive }
+        var unpairedInsertions = [AnyRangeAlteringEditor<T>]()
+
+        //Iterate over all of our additive (insertion) edits
+        insertionLoop: for insertion in insertions {
+            
+            //If an insertion and corresponding deletion are present - condense them into a move
+            for deletion in zip(availableDeletions.indices, availableDeletions) {
+                if let movement = movementEdit(from: insertion, and: deletion.1) {
+                    rangeAlteringEdits.append(movement)
+                    availableDeletions.remove(at: deletion.0)
+                    continue insertionLoop
                 }
             }
+            
+            unpairedInsertions.append(insertion)
         }
         
-        return rangeAlteringEdits + insertions.map { AnyEditor(editor: $0) } + deletions.map { AnyEditor(editor: $0) }
+        return rangeAlteringEdits + unpairedInsertions.map { AnyEditor(editor: $0) } + availableDeletions.map { AnyEditor(editor: $0) }
     }
 }
 

@@ -8,9 +8,9 @@
 
 import Foundation
 
-public protocol Editor: CustomStringConvertible {
+public protocol Editor: CustomStringConvertible  {
     
-    associatedtype EditedType: RangeReplaceableCollection where EditedType.IndexDistance == Int
+    associatedtype EditedType: RangeReplaceableCollection where EditedType.IndexDistance == Int, EditedType.Element: Equatable
     
     var source: EditedType { get }
     func perform(with input: EditedType) -> EditedType
@@ -19,7 +19,7 @@ public protocol Editor: CustomStringConvertible {
     func edit(forSection section: Int, in collectionView: UICollectionView)
 }
 
-public struct AnyEditor<T: RangeReplaceableCollection>: Editor where T.IndexDistance == Int {
+public struct AnyEditor<T: RangeReplaceableCollection>: Editor where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
     public let source: T

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor where T.IndexDistance == Int {
+public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
     public let source: T
@@ -21,7 +21,7 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor where
         self.index = index
     }
     
-    //MARK: Custom String Convertible
+    //MARK: CustomStringConvertible
     public var description: String {
         return "Delete \(deleted) from position \(source.distance(from: source.startIndex, to: index))"
     }
@@ -48,4 +48,9 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor where
     public var isAdditive: Bool { return false }
     public var alteredElement: T.Iterator.Element { return deleted }
     public var alteredIndex: T.Index { return index }
+    
+    //MARK: Equatable
+    public static func ==(lhs: Deletion<T>, rhs: Deletion<T>) -> Bool {
+        return lhs.alteredElement == rhs.alteredElement && lhs.alteredIndex == rhs.alteredIndex
+    }
 }

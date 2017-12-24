@@ -15,7 +15,7 @@ public protocol RangeAlteringEditor: Editor {
     var alteredIndex: EditedType.Index { get }
 }
 
-public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteringEditor where T.IndexDistance == Int {
+public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteringEditor where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
     public let source: T

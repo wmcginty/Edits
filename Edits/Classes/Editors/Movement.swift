@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Movement<T: RangeReplaceableCollection>: Editor  where T.IndexDistance == Int {
+public struct Movement<T: RangeReplaceableCollection>: Editor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
     public let source: T
@@ -23,6 +23,11 @@ public struct Movement<T: RangeReplaceableCollection>: Editor  where T.IndexDist
         self.to = to
     }
     
+    //MARK: CustomStringConvertible
+    public var description: String {
+        return "Move \(moving) from index \(source.distance(from: source.startIndex, to: from)) to index \(source.distance(from: source.startIndex, to: to))"
+    }
+    
     //MARK: Editor
     public func perform(with input: T) -> T {
         var output = input
@@ -30,10 +35,6 @@ public struct Movement<T: RangeReplaceableCollection>: Editor  where T.IndexDist
         output.insert(moving, at: to)
         
         return output
-    }
-    
-    public var description: String {
-        return "Move \(moving) from index \(source.distance(from: source.startIndex, to: from)) to index \(source.distance(from: source.startIndex, to: to))"
     }
     
     public func edit(forSection section: Int, in tableView: UITableView) {
@@ -46,5 +47,10 @@ public struct Movement<T: RangeReplaceableCollection>: Editor  where T.IndexDist
         let sourcePath = IndexPath(item: source.distance(from: source.startIndex, to: from), section: section)
         let destinationPath = IndexPath(item: source.distance(from: source.startIndex, to: to), section: section)
         collectionView.moveItem(at: sourcePath, to: destinationPath)
+    }
+    
+    //MARK: Equatable
+    public static func ==(lhs: Movement<T>, rhs: Movement<T>) -> Bool {
+        return lhs.moving == rhs.moving && lhs.from == rhs.from && lhs.to == rhs.to
     }
 }

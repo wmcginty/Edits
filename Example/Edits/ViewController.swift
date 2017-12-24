@@ -11,38 +11,41 @@ import Edits
 
 class ViewController: UIViewController {
     
+    @IBOutlet var tableView: UITableView!
     var numbers: [Int] = [1,2,3,4,5,6,7,8,9] {
         didSet {
-            let transformer = TransformerFactory.transformer(from: oldValue, to: numbers)
+            let transformer = Transformer(source: oldValue, destination: numbers)
             tableView.processUpdates(for: transformer, inSection: 0)
         }
         
-    }
-    @IBOutlet var tableView: UITableView!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.numbers = [1,2,4,5,6,7,9,8]
+            self.numbers = [5,6,7,8,9,1,2,3,4]
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            self.numbers = [5,7,9,1,3]
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
-            self.numbers = [1,4,3,2,5,6,9,8]
+            self.numbers = [2,4,6,8,5,7,9,1,3]
         }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.numbers = [1,2,3,4,5,6,8,7,9]
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
+            self.numbers = [1,2,3,4,5,6,7,8,9]
+        }
     }
 }
 
+//MARK: UITableViewDataSource
 extension ViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1

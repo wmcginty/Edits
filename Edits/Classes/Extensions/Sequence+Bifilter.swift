@@ -6,3 +6,18 @@
 //
 
 import Foundation
+
+extension Sequence {
+    
+    func bifilter(_ isIncluded: (Element) throws -> Bool) rethrows -> (included: [Element], notIncluded: [Element]) {
+        var included = [Element]()
+        var notIncluded = [Element]()
+        
+        for element in self {
+            guard try isIncluded(element) else { notIncluded.append(element); break }
+            included.append(element)
+        }
+        
+        return (included, notIncluded)
+    }
+}
