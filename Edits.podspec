@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Edits'
   s.version          = '0.1.0'
-  s.summary          = 'A mini-framework to determine the smallest set of edits between two collections.'
+  s.summary          = 'A micro-framework to determine and display the smallest set of edits between two collections.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
