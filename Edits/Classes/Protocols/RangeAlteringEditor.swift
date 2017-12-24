@@ -11,11 +11,11 @@ import Foundation
 public protocol RangeAlteringEditor: Editor {
     var isAdditive: Bool { get }
     
-    var alteredElement: EditedType.Iterator.Element { get }
+    var alteredElement: EditedType.Element { get }
     var alteredIndex: EditedType.Index { get }
 }
 
-public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteringEditor where T.IndexDistance == Int, T.Element: Equatable {
+public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor where T.Element: Equatable {
     
     //MARK: Properties
     public let source: T
@@ -26,7 +26,7 @@ public struct AnyRangeAlteringEditor<T: RangeReplaceableCollection>: RangeAlteri
     private let collectionEdit: (Int, UICollectionView) -> Void
     
     public let isAdditive: Bool
-    public let alteredElement: T.Iterator.Element
+    public let alteredElement: T.Element
     public let alteredIndex: T.Index
     
     //MARK: Initializers

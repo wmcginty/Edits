@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance == Int, T.Iterator.Element: Equatable {
+public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance == Int, T.Element: Equatable {
     
     //MARK: Properties
     let sourceCollection: T
@@ -39,8 +39,8 @@ extension Transformer {
             for column in 1...columns {
                 
                 let coordinate = Coordinate(row: row, column: column)
-                let sourceComponent = source.element(atOffsetFromStartIndex: row - 1)
-                let destinationComponent = destination.element(atOffsetFromStartIndex: column - 1)
+                let sourceComponent = source[atOffset: row - 1]
+                let destinationComponent = destination[atOffset: column - 1]
                 
                 let update = editCount(for: coordinate, in: editDistances, whenComponentsEqual: sourceComponent == destinationComponent)
                 editDistances.set(value: update, at: coordinate)
@@ -56,7 +56,7 @@ extension Transformer {
         var coordinate = matrix.end
         
         while matrix.value(for: coordinate) > 0 {
-            if coordinate.row > 0 && coordinate.column > 0 && source.element(atOffsetFromStartIndex: coordinate.row - 1) == destination.element(atOffsetFromStartIndex: coordinate.column - 1) {
+            if coordinate.row > 0 && coordinate.column > 0 && source[atOffset: coordinate.row - 1] == destination[atOffset: coordinate.column - 1] {
                 //The two elements are the same, no edit required. Move diagonally up the matrix and repeat.
                 coordinate = coordinate.inPreviousRow.inPreviousColumn
                 
@@ -91,8 +91,7 @@ extension Transformer {
 private extension Transformer {
     
     static func deletionEdit(from source: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
-        guard let element = source.element(atOffsetFromStartIndex: coordinate.row),
-            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else {
+        guard let element = source[atOffset: coordinate.row], let index = source.index(atOffset: coordinate.row) else {
                 fatalError("Logic error - we have calculated a coordinate that should not exist")
         }
         
@@ -100,8 +99,7 @@ private extension Transformer {
     }
     
     static func insertionEdit(into source: T, for coordinate: Coordinate) -> AnyRangeAlteringEditor<T> {
-        guard let element = source.element(atOffsetFromStartIndex: coordinate.column),
-            let index = source.index(source.startIndex, offsetBy: coordinate.column, limitedBy: source.endIndex) else {
+        guard let element = source[atOffset: coordinate.column], let index = source.index(atOffset: coordinate.column) else {
                 fatalError("Logic error - we have calculated a coordinate that should not exist")
         }
         
@@ -109,8 +107,8 @@ private extension Transformer {
     }
     
     static func substitutionEdit(from source: T, into destination: T, for coordinate: Coordinate) -> AnyEditor<T> {
-        guard let removed = source.element(atOffsetFromStartIndex: coordinate.row), let inserted = destination.element(atOffsetFromStartIndex: coordinate.column),
-            let index = source.index(source.startIndex, offsetBy: coordinate.row, limitedBy: source.endIndex) else {
+        guard let removed = source[atOffset: coordinate.row], let inserted = destination[atOffset: coordinate.column],
+            let index = source.index(atOffset: coordinate.row) else {
                 fatalError("Logic error - we have calculated a coordinate that should not exist")
         }
         
@@ -118,7 +116,7 @@ private extension Transformer {
     }
     
     static func movementEdit(from lhs: AnyRangeAlteringEditor<T>, and rhs: AnyRangeAlteringEditor<T>) -> AnyEditor<T>? {
-        guard lhs.isAdditive == !rhs.isAdditive && lhs.alteredElement == rhs.alteredElement else { return nil }
+        guard lhs.isAdditive != rhs.isAdditive && lhs.alteredElement == rhs.alteredElement else { return nil }
         
         let sourceIndex = !lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
         let destIndex = lhs.isAdditive ? lhs.alteredIndex : rhs.alteredIndex
@@ -126,32 +124,19 @@ private extension Transformer {
         let move = Movement(source: lhs.source, move: lhs.alteredElement, fromIndex: sourceIndex, toIndex: destIndex)
         return AnyEditor(editor: move)
     }
-    
-//    static func movementEdit(from lhs: AnyRangeAlteringEditor<T>, and rhs: [AnyRangeAlteringEditor<T>]) -> AnyEditor<T>? {
-//        for r in rhs {
-//            if let move = movementEdit(from: lhs, and: r) {
-//                return move
-//            }
-//        }
-//
-//        return nil
-//    }
 }
 
 //MARK: Helper
 private extension Transformer {
     
     static func editCount(for coordinate: Coordinate, in matrix: TransformMatrix, whenComponentsEqual equal: Bool) -> Int {
-        if equal {
-            return matrix[coordinate.inPreviousRow.inPreviousColumn]
-        } else {
-            return minimumEditCount(neighboring: coordinate, in: matrix) + 1
-        }
+        return equal ? matrix[coordinate.inPreviousRow.inPreviousColumn] : minimumEditCount(neighboring: coordinate, in: matrix) + 1
     }
     
     static func minimumEditCount(neighboring coordinate: Coordinate, in matrix: TransformMatrix) -> Int {
         switch (coordinate.row, coordinate.column) {
-        case let (r, c) where r > 0 && c > 0: return min(matrix[coordinate.inPreviousRow], matrix[coordinate.inPreviousColumn], matrix[coordinate.inPreviousRow.inPreviousColumn])
+        case let (r, c) where r > 0 && c > 0:
+            return min(matrix[coordinate.inPreviousRow], matrix[coordinate.inPreviousColumn], matrix[coordinate.inPreviousRow.inPreviousColumn])
         case let (r, _) where r > 0: return matrix[coordinate.inPreviousRow]
         case let (_, c) where c > 0: return matrix[coordinate.inPreviousColumn]
         default: return 0

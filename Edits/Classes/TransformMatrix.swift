@@ -34,7 +34,7 @@ public struct TransformMatrix {
     
     //MARK: Properties
     fileprivate var storage: [[Int]]
-    var end: Coordinate { return Coordinate(row: storage.first!.count - 1, column: storage.count - 1) }
+    var end: Coordinate { return Coordinate(row: storage[0].count - 1, column: storage.count - 1) }
     
     //MARK: Initializers
     init(rows: Int, columns: Int) {
@@ -58,9 +58,7 @@ extension TransformMatrix {
     }
     
     subscript(coordinate: Coordinate) -> Int {
-        get {
-            return value(for: coordinate)
-        }
+        return value(for: coordinate)
     }
 }
 

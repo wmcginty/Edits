@@ -15,7 +15,7 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equa
     public let deleted: T.Element
     public let index: T.Index
     
-    public init(source: T, deleted: T.Iterator.Element, atIndex index: T.Index) {
+    public init(source: T, deleted: T.Element, atIndex index: T.Index) {
         self.source = source
         self.deleted = deleted
         self.index = index
