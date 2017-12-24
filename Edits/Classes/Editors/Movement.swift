@@ -12,11 +12,11 @@ public struct Movement<T: RangeReplaceableCollection>: Editor, Equatable where T
     
     //MARK: Properties
     public let source: T
-    public let moving: T.Iterator.Element
+    public let moving: T.Element
     public let from: T.Index
     public let to: T.Index
     
-    public init(source: T, move: T.Iterator.Element, fromIndex from: T.Index, toIndex to: T.Index) {
+    public init(source: T, move: T.Element, fromIndex from: T.Index, toIndex to: T.Index) {
         self.source = source
         self.moving = move
         self.from = from

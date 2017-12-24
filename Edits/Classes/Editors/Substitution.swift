@@ -12,11 +12,11 @@ public struct Substitution<T: RangeReplaceableCollection>: Editor, Equatable whe
     
     //MARK: Properties
     public let source: T
-    public let from: T.Iterator.Element
-    public let to: T.Iterator.Element
+    public let from: T.Element
+    public let to: T.Element
     public let index: T.Index
     
-    public init(source: T, from: T.Iterator.Element, to: T.Iterator.Element, atIndex index: T.Index) {
+    public init(source: T, from: T.Element, to: T.Element, atIndex index: T.Index) {
         self.source = source
         self.from = from
         self.to = to

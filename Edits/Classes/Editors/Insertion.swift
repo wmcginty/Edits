@@ -12,10 +12,10 @@ public struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equ
     
     //MARK: Properties
     public let source: T
-    public let inserted: T.Iterator.Element
+    public let inserted: T.Element
     public let index: T.Index
     
-    public init(source: T, inserted: T.Iterator.Element, atIndex index: T.Index) {
+    public init(source: T, inserted: T.Element, atIndex index: T.Index) {
         self.source = source
         self.inserted = inserted
         self.index = index
@@ -47,7 +47,7 @@ public struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equ
     
     //MARK: RangeAlteringEditor
     public var isAdditive: Bool { return true }
-    public var alteredElement: T.Iterator.Element { return inserted }
+    public var alteredElement: T.Element { return inserted }
     public var alteredIndex: T.Index { return index }
     
     //MARK: Equatable

@@ -21,12 +21,6 @@ class ExtensionTests: XCTestCase {
     
     func testRangeReplaceableCollectionOffset() {
         let a = [1,2,3,4,5]
-        
-        for i in a.indices {
-            XCTAssertEqual(a.element(atOffsetFromStartIndex: i), a[i])
-        }
+        a.indices.forEach { XCTAssertEqual(a.element(atOffsetFromStartIndex: $0), a[$0]) }
     }
-    
-    
-    
 }

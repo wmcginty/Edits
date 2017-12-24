@@ -12,7 +12,7 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equa
     
     //MARK: Properties
     public let source: T
-    public let deleted: T.Iterator.Element
+    public let deleted: T.Element
     public let index: T.Index
     
     public init(source: T, deleted: T.Iterator.Element, atIndex index: T.Index) {
@@ -46,7 +46,7 @@ public struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equa
     
     //MARK: RangeAlteringEditor
     public var isAdditive: Bool { return false }
-    public var alteredElement: T.Iterator.Element { return deleted }
+    public var alteredElement: T.Element { return deleted }
     public var alteredIndex: T.Index { return index }
     
     //MARK: Equatable
