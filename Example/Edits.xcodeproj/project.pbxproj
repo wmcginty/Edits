@@ -15,6 +15,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		B2071951DF6DA45EBE27F75A /* Pods_Edits_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 552A28E1BEB74ADCE3046154 /* Pods_Edits_Example.framework */; };
+		B49BCCA71FEFD10E0079AD1D /* ExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49BCCA51FEFD1080079AD1D /* ExtensionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		843064C5252434E904174D33 /* Pods-Edits_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Edits_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Edits_Example/Pods-Edits_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		A17522078AD86F21E26EFD30 /* Pods-Edits_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Edits_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Edits_Example/Pods-Edits_Example.release.xcconfig"; sourceTree = "<group>"; };
 		A9798AC37588C2E66D36F9A8 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		B49BCCA51FEFD1080079AD1D /* ExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionTests.swift; sourceTree = "<group>"; };
 		B88CA47DAD0FAD8E823A72DE /* Pods_Edits_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Edits_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E26E4DE10B3241D2BF41B0AF /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		E3F85EB408153E1AE7AEEC87 /* Pods-Edits_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Edits_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Edits_Tests/Pods-Edits_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
+				B49BCCA51FEFD1080079AD1D /* ExtensionTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -380,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+				B49BCCA71FEFD10E0079AD1D /* ExtensionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,6 +560,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Edits_Example.app/Edits_Example";
 			};
 			name = Debug;
 		};
@@ -569,6 +574,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Edits_Example.app/Edits_Example";
 			};
 			name = Release;
 		};

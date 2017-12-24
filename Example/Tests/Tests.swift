@@ -1,8 +1,10 @@
 import UIKit
 import XCTest
-import Edits
+@testable import Edits
 
 class Tests: XCTestCase {
+    
+    
     
     
 }

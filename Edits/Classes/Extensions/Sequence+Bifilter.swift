@@ -14,7 +14,7 @@ extension Sequence {
         var notIncluded = [Element]()
         
         for element in self {
-            guard try isIncluded(element) else { notIncluded.append(element); break }
+            guard try isIncluded(element) else { notIncluded.append(element); continue }
             included.append(element)
         }
         
