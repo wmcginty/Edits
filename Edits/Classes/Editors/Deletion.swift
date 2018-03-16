@@ -8,18 +8,18 @@
 
 import Foundation
 
-struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
+struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable where T.Element: Equatable {
     
     //MARK: Properties
     let deleted: T.Element
-    let offset: T.IndexDistance
+    let offset: Int
     
     init(source: T, deleted: T.Element, atIndex index: T.Index) {
         let offset = source.distance(from: source.startIndex, to: index)
         self.init(deleted: deleted, atIndexOffset: offset)
     }
     
-    init(deleted: T.Element, atIndexOffset offset: T.IndexDistance) {
+    init(deleted: T.Element, atIndexOffset offset: Int) {
         self.deleted = deleted
         self.offset = offset
     }
@@ -52,7 +52,7 @@ struct Deletion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable w
     //MARK: RangeAlteringEditor
     var isAdditive: Bool { return false }
     var alteredElement: T.Element { return deleted }
-    var alteredIndexOffset: T.IndexDistance { return offset }
+    var alteredIndexOffset: Int { return offset }
     
     //MARK: Equatable
     static func ==(lhs: Deletion<T>, rhs: Deletion<T>) -> Bool {

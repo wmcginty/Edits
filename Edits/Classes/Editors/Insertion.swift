@@ -8,18 +8,18 @@
 
 import Foundation
 
-struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
+struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable where T.Element: Equatable {
     
     //MARK: Properties
     let inserted: T.Element
-    let offset: T.IndexDistance
+    let offset: Int
     
     init(source: T, inserted: T.Element, atIndex index: T.Index) {
         let offset = source.distance(from: source.startIndex, to: index)
         self.init(inserted: inserted, atIndexOffset: offset)
     }
     
-    init(inserted: T.Element, atIndexOffset offset: T.IndexDistance) {
+    init(inserted: T.Element, atIndexOffset offset: Int) {
         self.inserted = inserted
         self.offset = offset
     }
@@ -52,7 +52,7 @@ struct Insertion<T: RangeReplaceableCollection>: RangeAlteringEditor, Equatable 
     //MARK: RangeAlteringEditor
     var isAdditive: Bool { return true }
     var alteredElement: T.Element { return inserted }
-    var alteredIndexOffset: T.IndexDistance { return offset }
+    var alteredIndexOffset: Int { return offset }
     
     //MARK: Equatable
     static func ==(lhs: Insertion<T>, rhs: Insertion<T>) -> Bool {

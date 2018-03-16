@@ -8,12 +8,12 @@
 
 import Foundation
 
-struct Movement<T: RangeReplaceableCollection>: Editor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
+struct Movement<T: RangeReplaceableCollection>: Editor, Equatable where T.Element: Equatable {
     
     //MARK: Properties
     let moving: T.Element
-    let from: T.IndexDistance
-    let to: T.IndexDistance
+    let from: Int
+    let to: Int
     
     init(source: T, move: T.Element, fromIndex from: T.Index, toIndex to: T.Index) {
         let fromOffset = source.distance(from: source.startIndex, to: from)
@@ -21,7 +21,7 @@ struct Movement<T: RangeReplaceableCollection>: Editor, Equatable where T.IndexD
         self.init(move: move, fromIndexOffset: fromOffset, toIndexOffset: toOffset)
     }
     
-    init(move: T.Element, fromIndexOffset from: T.IndexDistance, toIndexOffset to: T.IndexDistance) {
+    init(move: T.Element, fromIndexOffset from: Int, toIndexOffset to: Int) {
         self.moving = move
         self.from = from
         self.to = to

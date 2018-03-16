@@ -8,19 +8,19 @@
 
 import Foundation
 
-struct Substitution<T: RangeReplaceableCollection>: Editor, Equatable where T.IndexDistance == Int, T.Element: Equatable {
+struct Substitution<T: RangeReplaceableCollection>: Editor, Equatable where T.Element: Equatable {
     
     //MARK: Properties
     let from: T.Element
     let to: T.Element
-    let offset: T.IndexDistance
+    let offset: Int
     
     init(source: T, from: T.Element, to: T.Element, atIndex index: T.Index) {
         let offset = source.distance(from: source.startIndex, to: index)
         self.init(from: from, to: to, atIndexOffset: offset)
     }
     
-    init(from: T.Element, to: T.Element, atIndexOffset offset: T.IndexDistance) {
+    init(from: T.Element, to: T.Element, atIndexOffset offset: Int) {
         self.from = from
         self.to = to
         self.offset = offset

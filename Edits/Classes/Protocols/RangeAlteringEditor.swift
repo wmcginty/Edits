@@ -18,7 +18,7 @@ public protocol RangeAlteringEditor: Editor {
     var alteredElement: EditedType.Element { get }
     
     /// The offset at which the index the transformation resides. For instance, if the transformation applies to the beginning of a collection, this value will be 0.
-    var alteredIndexOffset: EditedType.IndexDistance { get }
+    var alteredIndexOffset: Int { get }
 }
 
 /// A type-erased wrapper struct around the Deletion, and Insertion edits. While their individual type can not be queried, their edit can be performed on any input.
@@ -33,7 +33,7 @@ public struct AnyRangeAlteringEditor<T: Collection>: RangeAlteringEditor where T
     
     public let isAdditive: Bool
     public let alteredElement: T.Element
-    public let alteredIndexOffset: T.IndexDistance
+    public let alteredIndexOffset: Int
     
     //MARK: Initializers
     public init<E: RangeAlteringEditor>(editor: E) where E.EditedType == T {

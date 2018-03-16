@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Transformer<T: RangeReplaceableCollection> where T.IndexDistance == Int, T.Element: Equatable {
+public class Transformer<T: RangeReplaceableCollection> where T.Element: Equatable {
     
     //MARK: Properties
     
