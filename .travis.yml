@@ -15,7 +15,6 @@ env:
 # cache: cocoapods
 # podfile: Example/Podfile
 before_install:
-  - pip install coveragepy
   - gem install cocoapods
   - pod install --project-directory=Example
 script:
