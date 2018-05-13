@@ -8,6 +8,7 @@ env:
   global:
     - WORKSPACE=Example/Edits.xcworkspace
     - IOS_FRAMEWORK_SCHEME="Edits-Example"
+    - RUN_TESTS="YES"
   matrix:
     - DESTINATION="platform=iOS Simulator,OS=11.3,name=iPhone X" SDK="iphonesimulator" SCHEME="$IOS_FRAMEWORK_SCHEME" RUN_TESTS="YES" POD_LINT="YES"
 
