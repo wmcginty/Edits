@@ -15,6 +15,7 @@ env:
 # cache: cocoapods
 # podfile: Example/Podfile
 before_install:
+  - brew install python3
   - pip3 install coveragepy
   - gem install cocoapods
   - pod install --project-directory=Example
